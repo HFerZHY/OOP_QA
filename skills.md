@@ -730,3 +730,77 @@ int main()
 ```
 这个程序的结果为：11ms，20ms
 由于行遍历的连续性，按行遍历可以快速找到下一个内存的指针，从而效率更高。
+
+## 如何使标准C++流更快
+上过程序设计基础的同学可能知道，`scanf`和`printf`是比`cin`和`cout`快的，某道作业题还曾特别提示要使用`scanf`以避免程序超时。然而，这一速度差别是因为标准C++流（`<iostream>`中的`cin`、`cout`、`cerr`、`clog`、`wcin`、`wcout`、`wcerr`和`wclog`）默认是和标准C流（`<stdio.h>`)同步的，这导致标准C++流在读写的时候需要使用对应标准C流的缓冲区，拖慢了C++流的速度。
+如果我们的程序中只使用了标准C++流，则我们可以通过`std::ios_base::sync_with_stdio(false)`关闭同步，这会较大地提升`cin`的速度。
+例如下面三个程序，分别使用标准C流，未关闭同步的标准C++流和关闭同步的C++标准流读入262144个随机整数：
+```c++
+#include <ctime>
+#include <stdio.h>
+using namespace std;
+
+int main(){
+    int x;
+    int parity = 0;
+    clock_t start, finish;
+
+  
+    start = clock();
+    while (1 == scanf("%d", &x))
+        parity ^= x;
+    finish = clock();
+
+    cout << difftime(finish, start) << endl;
+
+    return 0;
+}
+```
+运行时间：101ms
+
+```c++
+#include <iostream>
+#include <ctime>
+using namespace std;
+
+int main(){
+    int x;
+    int parity = 0;
+    clock_t start, finish;
+
+    std::ios::sync_with_stdio(true);
+    start = clock();
+    while (cin >> x)
+        parity ^= x;
+    finish = clock();
+
+    cout << difftime(finish, start) << endl;
+
+    return 0;
+}
+```
+运行时间：170ms
+
+```c++
+#include <iostream>
+#include <ctime>
+using namespace std;
+
+int main(){
+    int x;
+    int parity = 0;
+    clock_t start, finish;
+
+    std::ios::sync_with_stdio(false);
+    start = clock();
+    while (cin >> x)
+        parity ^= x;
+    finish = clock();
+
+    cout << difftime(finish, start) << endl;
+
+    return 0;
+}
+```
+运行时间：33ms
+由此可见，在需要接受大量输入的程序中，如果关闭同步，可以较大地提升程序速度。
