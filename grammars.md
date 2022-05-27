@@ -639,17 +639,19 @@ The most comfortable way to "open" a parameter pack is to use a recursive functi
 
 ## "nodiscard" in C++17
 
-C++17中添加了函数的`nodiscard`标签，当一个函数声明为`nodiscard`或者按值返回枚举或类时，如果在没有转型到`void`类型的弃置表达式中调用该函数，编译器将发布警告。
+C++17中添加了函数的`nodiscard`标签，当一个函数声明为`nodiscard`时，如果在没有转型到`void`类型的弃置表达式中调用该函数，编译器将发布警告。
 
 ### 语法
 
-#### `[[nodiscard]]`
+#### `[[nodiscard]]` 
 
 #### `[[nodiscard(字符串字面量)]]` （自C++20起）
 
-从C++20起，`nodiscard`后可添加字符串字面量以解释为何返回值不能被舍弃。
+`nodiscard`标签应放置在函数声明前。从C++20起，`nodiscard`后可添加字符串字面量以解释为何返回值不能被舍弃。
 
-使用范例：
+`nodiscard`标签还可以用于枚举类型和类的声明前，此时若调用按值返回声明为`nodiscard`的枚举或类的函数、以显式类型转换或`static_cast`形式调用声明为`nodiscard`的构造函数、以显式类型转换或`static_cast`形式调用声明为`nodiscard`的枚举类或类的对象时，编译器都会发布警告。
+
+使用示例：
 
 ```cpp
 #include <iostream>
