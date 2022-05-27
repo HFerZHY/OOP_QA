@@ -637,3 +637,62 @@ The most comfortable way to "open" a parameter pack is to use a recursive functi
 为了区分NULL和0，C++11引入了空指针nullptr。nullptr的类型为std::nullptr_t而非指针或int，可以保证nullptr表示空指针而不是0。
 在使用空指针时，应该尽量使用nullptr而不是NULL。
 
+## "nodiscard" in C++17
+
+C++17中添加了函数的`nodiscard`标签，当一个函数声明为`nodiscard`或者按值返回枚举或类时，如果在没有转型到`void`类型的弃置表达式中调用该函数，编译器将发布警告。
+
+### 语法
+
+#### `[[nodiscard]]`
+
+#### `[[nodiscard(字符串字面量)]]` （自C++20起）
+
+从C++20起，`nodiscard`后可添加字符串字面量以解释为何返回值不能被舍弃。
+
+使用范例：
+
+```cpp
+#include <iostream>
+using namespace std;
+
+[[nodiscard]] int foo(){
+    return 1;
+}
+
+[[nodiscard("THOU SHALL NOT DISCARD THE RETURN VALUE")]] int bar(){
+    return 2;
+}
+
+int main(){
+    foo();//返回值被舍弃，编译器发布警告
+    bar();//返回值被舍弃，编译器发布警告，同时输出nodiscard标签后的字符串字面量
+    cout << foo() << endl;
+    cout << bar() << endl;
+    return 0;
+}
+```
+
+编译器警告：
+
+```
+C:\...\nodis.cpp: In function 'int main()':
+C:\...\nodis.cpp:13:8: warning: ignoring return value of 'int foo()', declared with attribute 'nodiscard' [-Wunused-result]
+   13 |     foo();
+      |     ~~~^~
+C:\...\nodis.cpp:4:19: note: declared here
+    4 | [[nodiscard]] int foo(){
+      |                   ^~~
+C:\...\nodis.cpp:14:8: warning: ignoring return value of 'int bar()', declared with attribute 'nodiscard': 'THOU SHALL NOT DISCARD THE RETURN VALUE' [-Wunused-result]
+   14 |     bar();
+      |     ~~~^~
+C:\...\nodis.cpp:8:62: note: declared here
+    8 | [[nodiscard("THOU SHALL NOT DISCARD THE RETURN VALUE")]] int bar(){
+      |      
+```
+
+输出：
+
+```
+1
+2
+```
