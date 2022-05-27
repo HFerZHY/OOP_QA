@@ -745,11 +745,14 @@ int main(){
     int parity = 0;
     clock_t start, finish;
 
+  
     start = clock();
     while (1 == scanf("%d", &x))
         parity ^= x;
     finish = clock();
+
     cout << difftime(finish, start) << endl;
+
     return 0;
 }
 ```
@@ -765,12 +768,14 @@ int main(){
     int parity = 0;
     clock_t start, finish;
 
-    std::ios::sync_with_stdio(true);//打开同步，默认为true
+    std::ios::sync_with_stdio(true);
     start = clock();
     while (cin >> x)
         parity ^= x;
     finish = clock();
+
     cout << difftime(finish, start) << endl;
+
     return 0;
 }
 ```
@@ -786,12 +791,14 @@ int main(){
     int parity = 0;
     clock_t start, finish;
 
-    std::ios::sync_with_stdio(false);//关闭同步
+    std::ios::sync_with_stdio(false);
     start = clock();
     while (cin >> x)
         parity ^= x;
     finish = clock();
+
     cout << difftime(finish, start) << endl;
+
     return 0;
 }
 ```
